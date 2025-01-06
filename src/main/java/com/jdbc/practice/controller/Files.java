@@ -38,8 +38,12 @@ public class Files {
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<String> updateFile(@PathVariable int id, @RequestParam String fileName,
-            @RequestParam MultipartFile file) {
+    public ResponseEntity<String> updateFile(@PathVariable int id, @RequestParam(required = false) String fileName,
+            @RequestParam(required = false) MultipartFile file) {
+
+        if (fileName == null && file == null) {
+            return new ResponseEntity<>("Please provide a file or a file name to update", HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(fileService.updateFile(id, file, fileName), HttpStatus.OK);
     }
 

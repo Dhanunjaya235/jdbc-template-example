@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jdbc.practice.model.File;
 
@@ -51,17 +52,25 @@ public class FileDao {
         return jdbcTemplate.queryForObject(query, String.class, id);
     }
 
-    public String updateUploadedFile(int id, byte[] file, String fileName) {
+    public String updateUploadedFile(int id, MultipartFile file, String fileName) {
         try {
-            String existingFileName = getFileName(id);
-            if (existingFileName == null) {
+            File existingFile = downloadFile(id);
+            if (existingFile == null) {
                 return "File not found";
             }
 
             String query = "CALL update_file(?,?,?)";
             CallableStatement statement = connection.prepareCall(query);
             statement.setInt(1, id);
-            statement.setBytes(2, file);
+
+            byte[] fileBytes = existingFile.getFile();
+            if (file != null) {
+                fileBytes = file.getBytes();
+            }
+            statement.setBytes(2, fileBytes);
+            if (fileName == null) {
+                fileName = existingFile.getFileName();
+            }
             statement.setString(3, fileName);
 
             statement.execute();

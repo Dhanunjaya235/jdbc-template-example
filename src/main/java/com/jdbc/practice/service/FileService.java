@@ -28,7 +28,7 @@ public class FileService {
 
     public String updateFile(int id, MultipartFile file, String fileName) {
         try {
-            return fileDao.updateUploadedFile(id, file.getBytes(), fileName);
+            return fileDao.updateUploadedFile(id, file, fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
