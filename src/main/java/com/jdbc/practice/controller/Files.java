@@ -1,7 +1,9 @@
 package com.jdbc.practice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +38,15 @@ public class Files {
     }
 
     @PatchMapping("/update/{id}")
-    public String updateFile(@PathVariable int id, @RequestParam String fileName, @RequestParam MultipartFile file) {
-        return fileService.updateFile(id, file, fileName);
+    public ResponseEntity<String> updateFile(@PathVariable int id, @RequestParam String fileName,
+            @RequestParam MultipartFile file) {
+        return new ResponseEntity<>(fileService.updateFile(id, file, fileName), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteFile(@PathVariable int id) {
+        fileService.deleteFile(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

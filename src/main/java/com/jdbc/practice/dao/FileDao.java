@@ -37,9 +37,13 @@ public class FileDao {
     }
 
     public File downloadFile(int id) {
-        String query = "SELECT id,file_name, file FROM files WHERE id = ?";
-        RowMapper<File> rowMapper = new BeanPropertyRowMapper<>(File.class);
-        return jdbcTemplate.queryForObject(query, rowMapper, id);
+        try {
+            String query = "SELECT id,file_name, file FROM files WHERE id = ?";
+            RowMapper<File> rowMapper = new BeanPropertyRowMapper<>(File.class);
+            return jdbcTemplate.queryForObject(query, rowMapper, id);
+        } catch (Exception e) {
+            throw new RuntimeException("File not found");
+        }
     }
 
     public String getFileName(int id) {
@@ -66,6 +70,15 @@ public class FileDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void deleteFile(int id) {
+        String existingFileName = getFileName(id);
+        if (existingFileName == null) {
+            throw new RuntimeException("File not found");
+        }
+        String query = "DELETE FROM files WHERE id = ?";
+        jdbcTemplate.update(query, id);
     }
 
 }

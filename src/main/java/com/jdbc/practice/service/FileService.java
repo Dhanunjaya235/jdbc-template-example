@@ -33,4 +33,8 @@ public class FileService {
             throw new RuntimeException(e);
         }
     }
+
+    public void deleteFile(int id) {
+        fileDao.deleteFile(id);
+    }
 }
